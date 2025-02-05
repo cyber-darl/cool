@@ -22,7 +22,7 @@ jobs:
         env:
           IBMCLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
         run: |
-          echo "${IBMCLOUD_API_KEY}" | ibmcloud login --apikey @- -r us-east
+          echo ${IBMCLOUD_API_KEY} | ibmcloud login --apikey @- -r us-east
           ibmcloud target --cf
           
       - name: Push Docker image to IBM Cloud Container Registry
