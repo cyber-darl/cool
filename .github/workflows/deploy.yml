@@ -17,7 +17,7 @@ jobs:
           curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
           ibmcloud --version  # Verify installation
 
-      - name: Authenticate with IBM Cloud
+      - name: Log in to IBM Cloud
         run: |
           echo "${{ secrets.IBM_CLOUD_API_KEY }}" | ibmcloud login --apikey @- -r us-east
 
