@@ -17,6 +17,8 @@ jobs:
         run: |
           echo "${{ secrets.IBM_CLOUD_API_KEY }}" | ibmcloud login --apikey @- -r us-east
           ibmcloud target -g Default
+          shell: bash
+
 
       - name: Set up IBM Cloud Code Engine CLI
         run: |
