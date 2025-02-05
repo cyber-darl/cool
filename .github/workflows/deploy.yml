@@ -24,7 +24,7 @@ jobs:
         run: |
           # Directly pass the API key instead of piping it
           ibmcloud login --apikey "$IBMCLOUD_API_KEY" -r us-east
-          
+
       - name: Target Resource Group
         run: |
           ibmcloud target -g Default
@@ -49,4 +49,4 @@ jobs:
       - name: Deploy to IBM Cloud Code Engine
         run: |
           ibmcloud ce project select --name cool
-          ibmcloud ce app deploy --name cool-sito --image cyberdarl/jiggy:latest --region us-east
+          ibmcloud ce app application create --name cool-sito --image cyberdarl/jiggy:latest --region us-east
