@@ -24,6 +24,11 @@ jobs:
         run: |
           # Directly pass the API key instead of piping it
           ibmcloud login --apikey "$IBMCLOUD_API_KEY" -r us-east
+          
+      - name: Target Resource Group
+        run: |
+          ibmcloud target -g Default
+          # Replace "Default" with your actual resource group name if needed
 
       - name: Install IBM Cloud Code Engine Plugin
         run: |
