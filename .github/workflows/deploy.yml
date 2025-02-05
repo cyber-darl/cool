@@ -16,22 +16,32 @@ jobs:
       - name: Install IBM Cloud CLI
         run: |
           curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
-          ibmcloud --version  # Verify installation
+          ibmcloud --version
 
-      - name: Login to IBM Cloud
+      - name: Authenticate with IBM Cloud
         env:
           IBMCLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
         run: |
-          echo ${IBMCLOUD_API_KEY} | ibmcloud login --apikey @- -r us-east
-          ibmcloud target --cf
-          
-      - name: Push Docker image to IBM Cloud Container Registry
+          # Directly pass the API key instead of piping it
+          ibmcloud login --apikey "$IBMCLOUD_API_KEY" -r us-east
+
+      - name: Install IBM Cloud Code Engine Plugin
         run: |
-          docker build -t us.icr.io/your-registry-name/your-image-name:latest .
-          echo "${{ secrets.IBM_CLOUD_API_KEY }}" | docker login --username iamapikey --password-stdin us.icr.io
-          docker push us.icr.io/your-registry-name/your-image-name:latest
+          ibmcloud plugin install code-engine
+
+      - name: Build Docker Image
+        run: |
+          docker build -t your_dockerhub_username/your-image:latest .
+
+      - name: Log in to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: Push Docker Image to Docker Hub
+        run: |
+          docker push your_dockerhub_username/your-image:latest
 
       - name: Deploy to IBM Cloud Code Engine
         run: |
-          ibmcloud code-engine app deploy --name your-app-name --image us.icr.io/your-registry-name/your-image-name:latest --region us-east
-
+          ibmcloud ce project select --name medical-app
+          ibmcloud ce app deploy --name medical-app --image your_dockerhub_username/your-image:latest --region us-east
