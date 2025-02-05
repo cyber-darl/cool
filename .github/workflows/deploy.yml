@@ -13,14 +13,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install IBM Cloud CLI
+      - name: Log in to IBM Cloud
         run: |
-          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
-          ibmcloud --version  # Verify installation
-
-      - name: Authenticate with IBM Cloud
-        run: echo -n "${{ secrets.IBM_CLOUD_API_KEY }}" | ibmcloud login --apikey @- -r us-east
-
+          echo "${{ secrets.IBM_CLOUD_API_KEY }}" | ibmcloud login --apikey @- -r us-east
+          ibmcloud target -g Default
 
       - name: Set up IBM Cloud Code Engine CLI
         run: |
