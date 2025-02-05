@@ -39,9 +39,9 @@ jobs:
 
       - name: Push Docker Image to Docker Hub
         run: |
-          docker push your_dockerhub_username/your-image:latest
+          docker push cyberdarl/jiggy:latest
 
       - name: Deploy to IBM Cloud Code Engine
         run: |
-          ibmcloud ce project select --name medical-app
-          ibmcloud ce app deploy --name medical-app --image your_dockerhub_username/your-image:latest --region us-east
+          ibmcloud ce project select --name cool
+          ibmcloud ce app deploy --name cool-sito --image cyberdarl/jiggy:latest --region us-east
