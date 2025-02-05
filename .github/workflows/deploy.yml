@@ -49,4 +49,4 @@ jobs:
       - name: Deploy to IBM Cloud Code Engine
         run: |
           ibmcloud ce project select --name cool
-          ibmcloud ce app application create --name cool-sito --image cyberdarl/jiggy:latest --region us-east
+          ibmcloud ce application update --name cool-sito --image cyberdarl/jiggy:latest --region us-east
