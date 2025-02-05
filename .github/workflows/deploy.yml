@@ -52,4 +52,4 @@ jobs:
           # Select the Code Engine project (replace 'my-project' with your actual project name)
           ibmcloud ce project select --name cool
           # Update the existing application "cool-sito" with the new Docker image
-          ibmcloud ce application update --name cool-sito --image cyberdarl/jiggy:latest --region us-east
+          ibmcloud ce application update --name cool-sito --image cyberdarl/jiggy:latest 
