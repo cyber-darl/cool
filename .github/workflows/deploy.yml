@@ -1,35 +1,20 @@
-name: Deploy to IBM Cloud Code Engine
-
-on:
-  push:
-    branches:
-      - main  # Change this if you use a different branch
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Log in to IBM Cloud
+      - name: Install IBM Cloud CLI
         run: |
-          echo "${{ secrets.IBM_CLOUD_API_KEY }}" | ibmcloud login --apikey @- -r us-east
-          ibmcloud target -g Default
+          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+          ibmcloud --version  # Verify installation
 
-      - name: Set up IBM Cloud Code Engine CLI
-        run: |
-          ibmcloud plugin install code-engine
-          ibmcloud ce project select --name my-project  # Change project name
+      - name: Authenticate with IBM Cloud
+        run: echo "${{ secrets.IBM_CLOUD_API_KEY }}" | ibmcloud login --apikey @- -r us-east
 
-      - name: Build & Push Container to IBM Cloud Container Registry
-        run: |
-          ibmcloud cr login
-          docker build -t us.icr.io/my-namespace/my-app:latest .
-          docker push us.icr.io/my-namespace/my-app:latest
+      - name: Set target project
+        run: ibmcloud ce project select -n medical-app
 
-      - name: Deploy to IBM Cloud Code Engine
-        run: |
-          ibmcloud ce application update --name my-app --image us.icr.io/my-namespace/my-app:latest
-
+      - name: Deploy application
+        run: ibmcloud ce app deploy --name medical-app --image us.icr.io/your-namespace/your-app-image:latest
