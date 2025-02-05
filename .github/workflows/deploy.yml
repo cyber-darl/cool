@@ -1,15 +1,16 @@
-name: Deploy to IBM Cloud Code Engine
+name: Deploy to IBM Code Engine
 
 on:
   push:
     branches:
-      - main  # Change if your branch is different
+      - main  # Change if using a different branch
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Use a runner with Linux support
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Install IBM Cloud CLI
@@ -17,16 +18,8 @@ jobs:
           curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
           ibmcloud --version  # Verify installation
 
-      - name: Log in to IBM Cloud
+      - name: Authenticate with IBM Cloud
+        env:
+          IBMCLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}  # Ensuring proper reference
         run: |
-          echo "${{ secrets.IBM_CLOUD_API_KEY }}" | ibmcloud login --apikey @- -r us-east
-
-      - name: Target IBM Cloud Container Registry
-        run: |
-          ibmcloud cr region-set us-east
-          ibmcloud cr login
-
-      - name: Deploy to Code Engine
-        run: |
-          ibmcloud ce project select --name medical-app
-          ibmcloud ce application apply --name my-app --image my-docker-image:latest
+          echo "$IBMCLOUD_API_KEY" | ibmcloud login --apikey @- -r us-east
