@@ -3,7 +3,7 @@ name: Deploy to IBM Code Engine
 on:
   push:
     branches:
-      - main  # Change if using a different branch
+      - main
 
 jobs:
   deploy:
@@ -16,10 +16,21 @@ jobs:
       - name: Install IBM Cloud CLI
         run: |
           curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
-          ibmcloud --version  # Verify installation
+          ibmcloud --version
+
+      - name: Debug API Key Presence
+        env:
+          IBMCLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
+        run: |
+          if [[ -z "$IBMCLOUD_API_KEY" ]]; then
+            echo "❌ ERROR: IBM_CLOUD_API_KEY is empty!"
+            exit 1
+          else
+            echo "✅ IBM_CLOUD_API_KEY is set."
+          fi
 
       - name: Authenticate with IBM Cloud
         env:
-          IBMCLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}  # Ensuring proper reference
+          IBMCLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
         run: |
           echo "$IBMCLOUD_API_KEY" | ibmcloud login --apikey @- -r us-east
