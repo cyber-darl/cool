@@ -1,4 +1,4 @@
-name: Deploy to IBM Code Engine
+name: Deploy to IBM Cloud
 
 on:
   push:
@@ -16,21 +16,34 @@ jobs:
       - name: Install IBM Cloud CLI
         run: |
           curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
-          ibmcloud --version
-
-      - name: Debug API Key Presence
-        env:
-          IBMCLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
-        run: |
-          if [[ -z "$IBMCLOUD_API_KEY" ]]; then
-            echo "❌ ERROR: IBM_CLOUD_API_KEY is empty!"
-            exit 1
-          else
-            echo "✅ IBM_CLOUD_API_KEY is set."
-          fi
+          ibmcloud --version  # Verify installation
 
       - name: Authenticate with IBM Cloud
         env:
           IBMCLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
         run: |
-          echo "$IBMCLOUD_API_KEY" | ibmcloud login --apikey @- -r us-east
+          echo "$IBMCLOUD_API_KEY" > ibm_api_key.txt
+          cat ibm_api_key.txt | ibmcloud login --apikey @- -r us-east
+
+      - name: Set up Docker
+        run: |
+          sudo apt-get install docker.io
+          sudo systemctl start docker
+          sudo systemctl enable docker
+          docker --version
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: Build Docker Image
+        run: |
+          docker build -t your_docker_image_name:latest .
+
+      - name: Push Docker Image to Docker Hub
+        run: |
+          docker push your_docker_image_name:latest
+
+      - name: Deploy to IBM Cloud Code Engine
+        run: |
+          ibmcloud target -r us-east
+          ibmcloud ce app deploy --name medical-app --image your_docker_image_name:latest
